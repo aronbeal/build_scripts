@@ -62,8 +62,8 @@ def get_environment_variables():
         variables = yaml.load_all(stream)
         for var in variables:
             for key, value in var.items():
-                print key, "->", value
-            print "\n",
+                print (key, "->", value)
+            print ("\n")
         return variables
     sys.stderr.write("Enviroment file '.circleci/script_variables.yml' could not be found.")
     sys.exit(1)
@@ -72,7 +72,7 @@ def get_environment_variables():
 def main():
     """Main executable"""
     env = get_environment_variables()
-    print "Build starting.  Current git branch: $CIRCLE_BRANCH"
+    print("Build starting.  Current git branch: $CIRCLE_BRANCH")
     # All dependencies found.
     skipped_files = set()
     php_files_visited = set()
@@ -96,20 +96,24 @@ def main():
         else:
             skipped_files.add(fullpath)
     if len(php_files_visited) == 0:
-        print "No linting required (no php files changed.)"
+        print("No linting required (no php files changed.)")
         sys.exit(0)
     else:
-        print "\n" + str(len(php_files_visited)) + " files visited:"
-        print "\n  - ".join(php_files_visited)
+        print ("\n" + str(len(php_files_visited)) + " files visited:")
+        print ("\n  - ".join(php_files_visited))
     if len(php_files_failed) > 0:
-        print "\n" + str(len(php_files_failed)) + " files skipped:"
-        print "\n  - ".join(skipped_files)
+        print ("\n" + str(len(php_files_failed)) + " files skipped:")
+        print ("\n  - ".join(skipped_files))
     if len(php_files_passed) > 0:
-        print "\n" + str(len(php_files_passed)) + " files passed:"
-        print "\n  - ".join(php_files_passed)
+        print ("\n" + str(len(php_files_passed)) + " files passed:")
+        print ("\n  - ".join(php_files_passed))
     if len(php_files_failed) > 0:
-        print "\n" + str(len(php_files_failed)) + " files failed:"
-        print "\n  - ".join(php_files_failed)
+        print ("\n" + str(len(php_files_failed)) + " files failed:")
+        print ("\n  - ".join(php_files_failed))
         sys.exit(1)
 # Run main.
-main()
+path = '.'
+if len(sys.argv) > 1:
+    path = sys.argv[1]
+
+main(path)
