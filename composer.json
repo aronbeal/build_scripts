@@ -3,18 +3,14 @@
     "type": "library",
     "description": "CircleCI devops scripts for Eelzee websites.",
     "license": "MIT",
-    "authors": [
-        {
-            "name": "Eelzee Websites",
-            "email": "abeal@eelzee.com",
-            "homepage": "http://www.eelzee.com",
-            "role": "Developer"
-        }
-    ],
+    "authors": [{
+        "name": "Eelzee Websites",
+        "email": "abeal@eelzee.com",
+        "homepage": "http://www.eelzee.com",
+        "role": "Developer"
+    }],
     "require": {
         "php": "^5.6 || ^7.0"
     },
-    {
-        "bin": ["bin/build.py"]
-    }
+    "bin": ["bin/build.py"]
 }
