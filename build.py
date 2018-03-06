@@ -14,6 +14,7 @@ from pathlib import Path
 # External variables:
 # - $CIRCLE_BRANCH is defined by CircleCI (https://circleci.com/docs/2.0/env-vars/)
 # Other variables should be defined in the file [repo_root]/circleci/script_variables.yml
+# Note that all commands are executed from the repository root directory.
 
 def which(program):
     """Simulates unix 'which' command"""
@@ -72,34 +73,26 @@ def main():
     """Main executable"""
     env = get_environment_variables()
     print "Build starting.  Current git branch: $CIRCLE_BRANCH"
-    if not which('phpcs'):
-        sys.stderr.write("phpcs is not available")
-        sys.exit(1)
-    if not which('composer'):
-        sys.stderr.write("composer is not available")
-        sys.exit(1)
-    # if not which('npm'):
-    #     sys.stderr.write("npm is not available")
-    #     sys.exit(1)
-    print "All dependencies found."
+    # All dependencies found.
     php_files_visited = set()
     php_files_passed = set()
     php_files_failed = set()
     for myfile in get_changed_files():
-        if(os.path.isfile(myfile)):
-            if re.match(r"sites/all/modules/features", myfile):
-                continue;
-            if re.match(r"sites/all/modules/contrib", myfile):
-                continue;
-            if re.match(r".*\.(php|module|inc|install)$", myfile):
-                fullpath = os.path.abspath(myfile)
-                php_files_visited.add(fullpath)
-                # Get the full path to the file.
-                # Assert drupal coding standard.
-                if coding_standards_check(fullpath):
-                    php_files_passed.add(fullpath)
-                else:
-                    php_files_failed.add(fullpath)
+        if(!os.path.isfile(myfile)):
+            continue
+        if re.match(r"sites/all/modules/features", myfile):
+            continue;
+        if re.match(r"sites/all/modules/contrib", myfile):
+            continue;
+        if re.match(r".*\.(php|module|inc|install)$", myfile):
+            fullpath = os.path.abspath(myfile)
+            php_files_visited.add(fullpath)
+            # Get the full path to the file.
+            # Assert drupal coding standard.
+            if coding_standards_check(fullpath):
+                php_files_passed.add(fullpath)
+            else:
+                php_files_failed.add(fullpath)
     if len(php_files_visited) == 0:
         print "No linting required (no php files changed.)"
         sys.exit(0)
