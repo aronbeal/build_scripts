@@ -54,9 +54,9 @@ def coding_standards_check(fullpath):
     except subprocess.CalledProcessError:
         return False
 
-def get_environment_variables(root_directory):
+def get_environment_variables():
     """Loads environment variables from an external file"""
-    env_file = Path(root_directory + '/.circleci/script_variables.yml')
+    env_file = Path('.circleci/script_variables.yml')
     result = {}
     if env_file.exists():
         stream = open(str(env_file), "r")
@@ -72,10 +72,10 @@ def get_environment_variables(root_directory):
     sys.exit(1)
 
 
-def main(root_directory):
+def main():
     """Main executable"""
-    env = get_environment_variables(root_directory)
-    print("Build starting.  Current git branch: $CIRCLE_BRANCH")
+    env = get_environment_variables()
+    print("Build starting.")
     # All dependencies found.
     skipped_files = set()
     php_files_visited = set()
@@ -114,9 +114,6 @@ def main(root_directory):
         print ("\n" + str(len(php_files_failed)) + " files failed:")
         print ("\n  - ".join(php_files_failed))
         sys.exit(1)
-# Run main.
-path = '.'
-if len(sys.argv) > 1:
-    path = sys.argv[1]
 
-main(path)
+# Run main.
+main()

@@ -1,0 +1,15 @@
+# This file is used by the CircleCI build script.  It lists a series of variables and values
+# used by different build script properties.  To use, simply copy this file to
+# "[repository root]/.circleci/script_variables.yml", and update the individual variables
+# as appropriate to the repo being tested.
+
+##########################################
+#          Variables for build.py        #
+##########################################
+# CODING_STANDARDS_DIRECTORIES: Defines the directories (relative to the repository root)
+# that are susceptible to coding standards checks.  If a file is not in one of these
+# directories, it will not be verified.
+CODING_STANDARDS_DIRECTORIES:
+  - sites/all/modules/custom
+  - sites/all/scripts
+

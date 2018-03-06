@@ -1,0 +1,37 @@
+# This file is an example configuration for the CircleCI continuous integration tool.
+# Simply copy this file to "[repository root]/.circleci/config.yml", and modify as needed.
+# Note: see https://circleci.com/docs/2.0/local-cli/ to install a local
+# cli tool for validating CircleCI config files.
+version: 2
+
+jobs:
+  # "build" is the name of the CircleCI default job.
+  build:
+    docker:
+      # Build tests are run in a docker container.
+      # For a list of php images, see https://circleci.com/docs/2.0/circleci-images/#php
+      - image: circleci/php:5.6.33-apache-jessie-node-browsers
+    environment:
+      TZ: "/usr/share/zoneinfo/America/Los_Angeles"
+    steps:
+      - checkout
+      # Fetch drupal coding standards for linting.
+      - run:
+          name: Install python YAML package (required by build script)
+          command: wget https://bootstrap.pypa.io/get-pip.py && sudo python get-pip.py && sudo pip install pyyaml && sudo pip install pathlib
+      - run:
+          name: Install Coder Module
+          command: composer require drupal/coder:~8.2.1
+      # Fetch python build scripts repo.
+      - run:
+          name: Install CI Build Script
+          command: composer require eelzee/circleci-build-scripts:dev-feature/circleci_2_upgrade
+      - run:
+          name: Add Drupal Coding Standards to Sniffer
+          command: vendor/bin/phpcs --config-set installed_paths vendor/drupal/coder/coder_sniffer
+      - run:
+          name: Fetch Repo Target Branch
+          command: git fetch origin develop
+      - run:
+          name: Run CI Build Script
+          command: python vendor/eelzee/circleci-build-scripts/build.py
