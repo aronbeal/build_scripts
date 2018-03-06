@@ -9,6 +9,9 @@ import subprocess
 import re
 from pprint import pprint
 
+# External variables:
+# - $CIRCLE_BRANCH is defined by CircleCI (https://circleci.com/docs/2.0/env-vars/)
+
 def which(program):
     """Simulates unix 'which' command"""
     def is_exe(fpath):
@@ -49,7 +52,7 @@ def coding_standards_check(fullpath):
 
 def main():
     """Main executable"""
-    print "Build starting."
+    print "Build starting.  Current git branch: $CIRCLE_BRANCH"
     if not which('phpcs'):
         sys.stderr.write("phpcs is not available")
         sys.exit(1)
