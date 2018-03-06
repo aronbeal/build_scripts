@@ -3,13 +3,13 @@ Circle CI build script
 
 A python build script to run php codesniffer only on files changed in a PR.
 """
+from pprint import pprint
+from pathlib import Path
 import os
 import sys
 import subprocess
 import re
 import yaml
-from pprint import pprint
-from pathlib import Path
 
 # External variables:
 # - $CIRCLE_BRANCH is defined by CircleCI (https://circleci.com/docs/2.0/env-vars/)
@@ -49,7 +49,7 @@ def coding_standards_check(fullpath):
     """Confirms that a file meets Drupal coding standards"""
     # Returns True if the file meets standards, False otherwise.
     try:
-        subprocess.check_call([which('vendor/bin/phpcs'), '--standard=Drupal', fullpath]) 
+        subprocess.check_call([which('vendor/bin/phpcs'), '--standard=Drupal', fullpath])
         return True
     except subprocess.CalledProcessError:
         return False
@@ -61,11 +61,11 @@ def get_environment_variables():
         stream = open(".circleci/script_variables.yml", "r")
         variables = yaml.load_all(stream)
         for var in variables:
-            for k,v in var.items():
-                print k, "->", v
+            for key, value in var.items():
+                print key, "->", value
             print "\n",
         return variables
-    sys.stderr.write("Enviroment variable file '.circleci/script_variables.yml' could not be found.");
+    sys.stderr.write("Enviroment file '.circleci/script_variables.yml' could not be found.")
     sys.exit(1)
 
 
@@ -78,12 +78,12 @@ def main():
     php_files_passed = set()
     php_files_failed = set()
     for myfile in get_changed_files():
-        if(!os.path.isfile(myfile)):
+        if not os.path.isfile(myfile):
             continue
         if re.match(r"sites/all/modules/features", myfile):
-            continue;
+            continue
         if re.match(r"sites/all/modules/contrib", myfile):
-            continue;
+            continue
         if re.match(r".*\.(php|module|inc|install)$", myfile):
             fullpath = os.path.abspath(myfile)
             php_files_visited.add(fullpath)
