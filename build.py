@@ -7,10 +7,12 @@ import os
 import sys
 import subprocess
 import re
+import yaml
 from pprint import pprint
 
 # External variables:
 # - $CIRCLE_BRANCH is defined by CircleCI (https://circleci.com/docs/2.0/env-vars/)
+# Other variables should be defined in the file [repo_root]/circleci/script_variables.yml
 
 def which(program):
     """Simulates unix 'which' command"""
@@ -50,8 +52,19 @@ def coding_standards_check(fullpath):
     except subprocess.CalledProcessError:
         return False
 
+def get_environment_variables():
+    """Provides repo-specific variables to the build script"""
+    stream = open(".circleci/script_variables.yml", "r")
+    variables = yaml.load_all(stream)
+    for var in variables:
+        for k,v in var.items():
+            print k, "->", v
+        print "\n",
+    return variables
+
 def main():
     """Main executable"""
+    env = get_environment_variables()
     print "Build starting.  Current git branch: $CIRCLE_BRANCH"
     if not which('phpcs'):
         sys.stderr.write("phpcs is not available")
