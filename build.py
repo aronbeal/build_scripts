@@ -9,6 +9,7 @@ import subprocess
 import re
 import yaml
 from pprint import pprint
+from pathlib import Path
 
 # External variables:
 # - $CIRCLE_BRANCH is defined by CircleCI (https://circleci.com/docs/2.0/env-vars/)
@@ -53,14 +54,19 @@ def coding_standards_check(fullpath):
         return False
 
 def get_environment_variables():
-    """Provides repo-specific variables to the build script"""
-    stream = open(".circleci/script_variables.yml", "r")
-    variables = yaml.load_all(stream)
-    for var in variables:
-        for k,v in var.items():
-            print k, "->", v
-        print "\n",
-    return variables
+    """Loads environment variables from an external file"""
+    env_file = Path('.circleci/script_variables.yml')
+    if env_file.exists():
+        stream = open(".circleci/script_variables.yml", "r")
+        variables = yaml.load_all(stream)
+        for var in variables:
+            for k,v in var.items():
+                print k, "->", v
+            print "\n",
+        return variables
+    sys.stderr.write("Enviroment variable file '.circleci/script_variables.yml' could not be found.");
+    sys.exit(1)
+
 
 def main():
     """Main executable"""
