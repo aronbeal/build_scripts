@@ -74,31 +74,36 @@ def main():
     env = get_environment_variables()
     print "Build starting.  Current git branch: $CIRCLE_BRANCH"
     # All dependencies found.
+    skipped_files = set()
     php_files_visited = set()
     php_files_passed = set()
     php_files_failed = set()
     for myfile in get_changed_files():
         if not os.path.isfile(myfile):
             continue
-        if re.match(r"sites/all/modules/features", myfile):
-            continue
-        if re.match(r"sites/all/modules/contrib", myfile):
-            continue
-        if re.match(r".*\.(php|module|inc|install)$", myfile):
-            fullpath = os.path.abspath(myfile)
-            php_files_visited.add(fullpath)
-            # Get the full path to the file.
-            # Assert drupal coding standard.
-            if coding_standards_check(fullpath):
-                php_files_passed.add(fullpath)
+        combined_fs_regex = "(" + ")|(".join(env.CODING_STANDARDS_DIRECTORIES) + ")"
+
+        if re.match(combined_fs_regex, mystring):
+            if re.match(r".*\.(php|module|inc|install)$", myfile):
+                fullpath = os.path.abspath(myfile)
+                php_files_visited.add(fullpath)
+                # Get the full path to the file.
+                # Assert drupal coding standard.
+                if coding_standards_check(fullpath):
+                    php_files_passed.add(fullpath)
+                else:
+                    php_files_failed.add(fullpath)
             else:
-                php_files_failed.add(fullpath)
+                skipped_files.add(fullpath)
     if len(php_files_visited) == 0:
         print "No linting required (no php files changed.)"
         sys.exit(0)
     else:
         print "\n" + str(len(php_files_visited)) + " files visited:"
         print "\n  - ".join(php_files_visited)
+    if len(php_files_failed) > 0:
+        print "\n" + str(len(php_files_failed)) + " files skipped:"
+        print "\n  - ".join(skipped_files)
     if len(php_files_passed) > 0:
         print "\n" + str(len(php_files_passed)) + " files passed:"
         print "\n  - ".join(php_files_passed)
