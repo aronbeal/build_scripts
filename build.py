@@ -54,24 +54,24 @@ def coding_standards_check(fullpath):
     except subprocess.CalledProcessError:
         return False
 
-def get_environment_variables():
+def get_environment_variables(root_directory):
     """Loads environment variables from an external file"""
-    env_file = Path('.circleci/script_variables.yml')
+    env_file = Path(root_directory + '/.circleci/script_variables.yml')
     if env_file.exists():
-        stream = open(".circleci/script_variables.yml", "r")
+        stream = open(str(env_file), "r")
         variables = yaml.load_all(stream)
         for var in variables:
             for key, value in var.items():
                 print (key, "->", value)
             print ("\n")
         return variables
-    sys.stderr.write("Enviroment file '.circleci/script_variables.yml' could not be found.")
+    sys.stderr.write("Enviroment file '" + str(env_file) + "' could not be found.")
     sys.exit(1)
 
 
-def main():
+def main(root_directory):
     """Main executable"""
-    env = get_environment_variables()
+    env = get_environment_variables(root_directory)
     print("Build starting.  Current git branch: $CIRCLE_BRANCH")
     # All dependencies found.
     skipped_files = set()
