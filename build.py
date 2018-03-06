@@ -38,6 +38,15 @@ def get_changed_files():
                                     'origin/develop',
                                     'HEAD']).strip().split("\n")
 
+def coding_standards_check(fullpath):
+    """Confirms that a file meets Drupal coding standards"""
+    # Returns True if the file meets standards, False otherwise.
+    try:
+        subprocess.check_call([which('vendor/bin/phpcs'), '--standard=Drupal', fullpath]) 
+        return True
+    except subprocess.CalledProcessError:
+        return False
+
 def main():
     """Main executable"""
     print "Build starting."
@@ -47,9 +56,9 @@ def main():
     if not which('composer'):
         sys.stderr.write("composer is not available")
         sys.exit(1)
-    if not which('npm'):
-        sys.stderr.write("npm is not available")
-        sys.exit(1)
+    # if not which('npm'):
+    #     sys.stderr.write("npm is not available")
+    #     sys.exit(1)
     print "All dependencies found."
     php_files_visited = set()
     php_files_passed = set()
@@ -65,10 +74,9 @@ def main():
                 php_files_visited.add(fullpath)
                 # Get the full path to the file.
                 # Assert drupal coding standard.
-                try:
-                    subprocess.check_call([which('phpcs'), '--standard=Drupal', fullpath]) 
+                if coding_standards_check(fullpath):
                     php_files_passed.add(fullpath)
-                except subprocess.CalledProcessError:
+                else subprocess.CalledProcessError:
                     php_files_failed.add(fullpath)
     if len(php_files_visited) == 0:
         print "No linting required (no php files changed.)"
