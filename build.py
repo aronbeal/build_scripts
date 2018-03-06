@@ -76,7 +76,6 @@ def main():
     """Main executable"""
     env = get_environment_variables()
     print("Build starting.")
-    # All dependencies found.
     skipped_files = set()
     php_files_visited = set()
     php_files_passed = set()
@@ -97,6 +96,8 @@ def main():
                 else:
                     php_files_failed.add(fullpath)
         else:
+            # Add to the output if a file was scipped because it failed the pattern match.
+            # This may clue us into the fact if a directory was erroneously excluded.
             skipped_files.add(myfile)
     if len(php_files_visited) == 0:
         print("No linting required (no php files changed.)")
