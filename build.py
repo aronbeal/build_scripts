@@ -98,7 +98,7 @@ def main():
                 # Assert drupal coding standard.
                 if coding_standards_check(fullpath):
                     php_files_passed.add(fullpath)
-                else subprocess.CalledProcessError:
+                else:
                     php_files_failed.add(fullpath)
     if len(php_files_visited) == 0:
         print "No linting required (no php files changed.)"
