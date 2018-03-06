@@ -93,8 +93,8 @@ def main():
                     php_files_passed.add(fullpath)
                 else:
                     php_files_failed.add(fullpath)
-            else:
-                skipped_files.add(fullpath)
+        else:
+            skipped_files.add(fullpath)
     if len(php_files_visited) == 0:
         print "No linting required (no php files changed.)"
         sys.exit(0)
