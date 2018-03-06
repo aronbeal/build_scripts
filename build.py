@@ -57,14 +57,17 @@ def coding_standards_check(fullpath):
 def get_environment_variables(root_directory):
     """Loads environment variables from an external file"""
     env_file = Path(root_directory + '/.circleci/script_variables.yml')
+    result = {}
     if env_file.exists():
         stream = open(str(env_file), "r")
         variables = yaml.load_all(stream)
         for var in variables:
             for key, value in var.items():
-                print (key, "->", value)
-            print ("\n")
-        return variables
+                result[key] = value
+        if 'CODING_STANDARDS_DIRECTORIES' not in result.keys():
+            sys.stderr.write("Required key 'CODING_STANDARDS_DIRECTORIES' was not present in the script_variables.yml file")
+            sys.exit(1)
+        return result
     sys.stderr.write("Enviroment file '" + str(env_file) + "' could not be found.")
     sys.exit(1)
 
@@ -81,9 +84,9 @@ def main(root_directory):
     for myfile in get_changed_files():
         if not os.path.isfile(myfile):
             continue
-        combined_fs_regex = "(" + ")|(".join(env.CODING_STANDARDS_DIRECTORIES) + ")"
+        combined_fs_regex = "(" + ")|(".join(env['CODING_STANDARDS_DIRECTORIES']) + ")"
 
-        if re.match(combined_fs_regex, mystring):
+        if re.match(combined_fs_regex, myfile):
             if re.match(r".*\.(php|module|inc|install)$", myfile):
                 fullpath = os.path.abspath(myfile)
                 php_files_visited.add(fullpath)
@@ -94,7 +97,7 @@ def main(root_directory):
                 else:
                     php_files_failed.add(fullpath)
         else:
-            skipped_files.add(fullpath)
+            skipped_files.add(myfile)
     if len(php_files_visited) == 0:
         print("No linting required (no php files changed.)")
         sys.exit(0)
