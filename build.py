@@ -11,8 +11,8 @@ import subprocess
 import re
 import yaml
 
-# External variables:
-# - $CIRCLE_BRANCH is defined by CircleCI (https://circleci.com/docs/2.0/env-vars/)
+# See the various environment variables defined by CircleCI here:
+# https://circleci.com/docs/2.0/env-vars/
 # Other variables should be defined in the file [repo_root]/circleci/script_variables.yml
 # Note that all commands are executed from the repository root directory.
 
