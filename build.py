@@ -13,6 +13,10 @@ import yaml
 
 # See the various environment variables defined by CircleCI here:
 # https://circleci.com/docs/2.0/env-vars/
+# @TODO (defer): add support for differentiating the build target.
+# Right now, the build target is hardcoded to develop.  We need to change this
+# once the upstream branch becomes available as an environment variable.
+# See https://discuss.circleci.com/t/create-a-circle-target-branch-envar/10022 for more.
 # Other variables should be defined in the file [repo_root]/circleci/script_variables.yml
 # Note that all commands are executed from the repository root directory.
 
